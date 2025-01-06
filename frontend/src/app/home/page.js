@@ -68,7 +68,7 @@ const closeModal = () => {
   const [formData, setFormData] = useState({
     // contract_type:"",
     contract_title:"",
-    due_date_for_todays_month_as_per_calendar:"",
+    // due_date_for_todays_month_as_per_calendar:"",
     client_name: "",
     client_address: "",
     client_email: "",
@@ -91,6 +91,7 @@ const closeModal = () => {
     service_quality_metrics: "",
     privacy_provisions: "",
     liability_limitations: "",
+    reminder:"",
   });
 
 
@@ -208,7 +209,7 @@ const closeModal = () => {
           setFormData({
 
             contract_title: jsonData.contract_title_along_with_provider_name || "",
-            due_date_for_todays_month_as_per_calendar:jsonData.due_date_for_todays_month_as_per_calendar || "",
+            // due_date_for_todays_month_as_per_calendar:jsonData.due_date_for_todays_month_as_per_calendar || "",
             client_name: jsonData.client_name || "",
   client_address: jsonData.client_address || "",
   client_email: jsonData.client_email || "",
@@ -488,6 +489,17 @@ const closeModal = () => {
         style={styles.calendarInput}
       />
     </label>
+    <label style={styles.label}>
+  Reminder (in days):
+  <input
+    type="number"
+    value={formData.reminder || ""}
+    onChange={(e) => handleChange({ target: { name: "reminder", value: e.target.value } })}
+    style={styles.input}
+    min="0" // Ensure only non-negative values
+  />
+</label>
+
      {/* Submit Button */}
     <button style={styles.submitButton} onClick={handleSubmit}>
       Submit Form

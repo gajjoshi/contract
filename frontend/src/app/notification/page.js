@@ -74,12 +74,19 @@ const fetchAndDisplayDocuments = async () => {
   };
   const getDueDateLabel = (dueDate) => {
     if (!dueDate) return null;
+    const [day, month, year] = dueDate.split('/'); // Split the date string into day, month, and year
+    const due = new Date(year, month - 1, day); // Month is 0-based in JavaScript
+
+
   
     const today = new Date();
-    const due = new Date(dueDate);
   
     const timeDiff = due.getTime() - today.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Difference in days
+    console.log("Due Date: " + due)
+    console.log("today: " + today)
+
+    console.log("TimeDiff: " + daysDiff)
   
     if (daysDiff === 0) {
       return { label: "Due Today", color: "white" };
@@ -300,109 +307,122 @@ const fetchAndDisplayDocuments = async () => {
 
   
   </div>
-{fetchedDocuments.length > 0 ? (
-  fetchedDocuments.map((doc, index) => {
-    const dueDateInfo = getDueDateLabel(doc.due_date_for_present_month); // Get due date label details
+  {fetchedDocuments.length > 0 ? (
+  fetchedDocuments
+    .filter((doc) => {
+      const dueDateInfo = getDueDateLabel(doc.due_date);
+      
+      if (toggleState === "Urgent") {
+        // Show only cards with "Due Tomorrow"
+        return dueDateInfo?.label === "Due Tomorrow";
+      }
+      if (toggleState === "Upcoming") {
+        // Show only cards with overdue dates
+        return dueDateInfo?.label && dueDateInfo.label.includes("Overdue");
+      }
+      return true; // Show all cards for "All" toggle
+    })
+    .map((doc, index) => {
+      const dueDateInfo = getDueDateLabel(doc.due_date);
 
-    return (
-      <div key={index} style={styles.fetchedDocumentCard}>
-        {/* Due Date Label */}
-        {dueDateInfo && (
-          <div style={{ color: dueDateInfo.color, fontWeight: "bold", marginBottom: "10px" }}>
-            {dueDateInfo.label}
+      return (
+        <div key={index} style={styles.fetchedDocumentCard}>
+          {/* Due Date Label */}
+          {dueDateInfo && (
+            <div style={{ color: dueDateInfo.color, fontWeight: "bold", marginBottom: "10px" }}>
+              {dueDateInfo.label}
+            </div>
+          )}
+
+          {/* Header Section */}
+          <div style={styles.headerContainer}>
+            <h3 style={styles.headerText}>
+              <FontAwesomeIcon icon="file-alt" style={styles.billIcon} />
+              Contract: {doc.contract_title || "N/A"}
+            </h3>
           </div>
-        )}
-        
-        {/* Header Section */}
-        <div style={styles.headerContainer}>
-          <h3 style={styles.headerText}>
-            <FontAwesomeIcon icon="file-alt" style={styles.billIcon} />
-            Contract: {doc.contract_title || "N/A"}
-          </h3>
+
+          <hr style={styles.horizontalLine} /> {/* Centered horizontal line */}
+
+          {expandedCardIndex === index ? (
+            // Expanded view with two-column layout
+            <div style={styles.expandedContainer}>
+              {/* Left Column */}
+              <div style={styles.column}>
+                {Object.entries(doc)
+                  .filter((_, i) => i % 2 === 0) // Even-indexed entries
+                  .map(([key, value]) => (
+                    <p key={key} style={styles.expandedText}>
+                      <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong> {value}
+                    </p>
+                  ))}
+              </div>
+              {/* Right Column */}
+              <div style={styles.column}>
+                {Object.entries(doc)
+                  .filter((_, i) => i % 2 !== 0) // Odd-indexed entries
+                  .map(([key, value]) => (
+                    <p key={key} style={styles.expandedText}>
+                      <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong> {value}
+                    </p>
+                  ))}
+              </div>
+            </div>
+          ) : (
+            // Collapsed view with two-column layout
+            <div style={styles.collapsedContainer}>
+              {/* Left Column */}
+              <div style={styles.column}>
+                <p style={styles.collapsedText}>
+                  <strong>PROVIDER NAME:</strong> {doc.provider_name}
+                </p>
+                <p style={styles.collapsedText}>
+                  <strong>ACTIVATION DATE:</strong> {doc.activation_date}
+                </p>
+                <p style={styles.collapsedText}>
+                  <strong>DESTRUCTION DATE:</strong> {doc.destruction_date}
+                </p>
+              </div>
+              {/* Right Column */}
+              <div style={styles.column}>
+                <p style={styles.collapsedText}>
+                  <strong>RENEWAL TYPE:</strong> {doc.renewal_type}
+                </p>
+                <p style={styles.collapsedText}>
+                  <strong>DUE DATE:</strong> {doc.due_date}
+                </p>
+                <p style={styles.collapsedText}>
+                  <strong>LIABILITY LIMITATIONS:</strong> {doc.liability_limitations}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Read More/Read Less button */}
+          <button
+            style={styles.readMoreButton}
+            onClick={() => toggleCardExpansion(index)}
+          >
+            {expandedCardIndex === index ? "Read Less" : "Read More"}
+          </button>
+          {/* Extend Contract Button */}
+          <button
+            style={styles.extendButton}
+            onClick={() => console.log("Extend Contract clicked for index:", index)}
+          >
+            Extend Contract
+          </button>
+
+          {/* Delete Contract Button */}
+          <button
+            style={styles.deleteButton}
+            onClick={() => console.log("Delete Contract clicked for index:", index)}
+          >
+            Delete Contract
+          </button>
         </div>
-
-        <hr style={styles.horizontalLine} /> {/* Centered horizontal line */}
-
-        {expandedCardIndex === index ? (
-          // Expanded view with two-column layout
-          <div style={styles.expandedContainer}>
-            {/* Left Column */}
-            <div style={styles.column}>
-              {Object.entries(doc)
-                .filter((_, i) => i % 2 === 0) // Even-indexed entries
-                .map(([key, value]) => (
-                  <p key={key} style={styles.expandedText}>
-                    <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong> {value}
-                  </p>
-                ))}
-            </div>
-            {/* Right Column */}
-            <div style={styles.column}>
-              {Object.entries(doc)
-                .filter((_, i) => i % 2 !== 0) // Odd-indexed entries
-                .map(([key, value]) => (
-                  <p key={key} style={styles.expandedText}>
-                    <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong> {value}
-                  </p>
-                ))}
-            </div>
-          </div>
-        ) : (
-          // Collapsed view with two-column layout
-          <div style={styles.collapsedContainer}>
-            {/* Left Column */}
-            <div style={styles.column}>
-              <p style={styles.collapsedText}>
-                <strong>PROVIDER NAME:</strong> {doc.provider_name}
-              </p>
-              <p style={styles.collapsedText}>
-                <strong>ACTIVATION DATE:</strong> {doc.activation_date}
-              </p>
-              <p style={styles.collapsedText}>
-                <strong>DESTRUCTION DATE:</strong> {doc.destruction_date}
-              </p>
-            </div>
-            {/* Right Column */}
-            <div style={styles.column}>
-              <p style={styles.collapsedText}>
-                <strong>RENEWAL TYPE:</strong> {doc.renewal_type}
-              </p>
-              <p style={styles.collapsedText}>
-                <strong>DUE DATE:</strong> {doc.due_date}
-              </p>
-              <p style={styles.collapsedText}>
-                <strong>LIABILITY LIMITATIONS:</strong> {doc.liability_limitations}
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {/* Read More/Read Less button */}
-        <button
-          style={styles.readMoreButton}
-          onClick={() => toggleCardExpansion(index)}
-        >
-          {expandedCardIndex === index ? "Read Less" : "Read More"}
-        </button>
-        {/* Extend Contract Button */}
-<button
-  style={styles.extendButton}
-  onClick={() => console.log("Extend Contract clicked for index:", index)}
->
-  Extend Contract
-</button>
-
-{/* Delete Contract Button */}
-<button
-  style={styles.deleteButton}
-  onClick={() => console.log("Delete Contract clicked for index:", index)}
->
-  Delete Contract
-</button>
-
-      </div>
-    );
-  })
+      );
+    })
 ) : (
   <p>No documents found.</p>
 )}

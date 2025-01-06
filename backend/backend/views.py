@@ -29,7 +29,7 @@ def get_collection_data(request):
 
             email = data.get("email")
             print(email)
-
+ 
             if not email:
                 return JsonResponse({"error": "Email is required."}, status=400)
 
@@ -151,7 +151,6 @@ client_name  client_address, client_email , client_phone ,provider_name , provid
   "payment_id": "<value>",
   "amount": "<value>",
   "due_date": "<value>",
-  "due_date_for_todays_month_as_per_calendar": "<value> in terms of dd/mm/yyyy format",
 
   "late_payment_fee": "<value>",
   "sla_id": "<value>",
