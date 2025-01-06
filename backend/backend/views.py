@@ -6,7 +6,7 @@ from datetime import datetime
 
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
-db = client['user_database']  # Replace 'user_database' with your database name
+db = client['user_database'] 
 import os
 import requests
 from django.views.decorators.csrf import csrf_exempt
@@ -131,6 +131,9 @@ def extract_text(request):
 client_name  client_address, client_email , client_phone ,provider_name , provider_address , provider_email , provider_phone , unique_contract_id (if available) , activation_date , initial_term , renewal_type , termination_notice , status , payment_id , amount , due_date , late_payment_fee , sla_id , service_quality_metrics , privacy_provisions , liability_limitations
             Always return the result in this JSON format , and leave the field entry if there is no association:
             {{
+         "contract_title_along_with_provider_name": "<value>",
+         
+         
                 "client_name": "<value>",
   "client_address": "<value>",
   "client_email": "<value>",
@@ -148,6 +151,8 @@ client_name  client_address, client_email , client_phone ,provider_name , provid
   "payment_id": "<value>",
   "amount": "<value>",
   "due_date": "<value>",
+  "due_date_for_todays_month_as_per_calendar": "<value> in terms of dd/mm/yyyy format",
+
   "late_payment_fee": "<value>",
   "sla_id": "<value>",
   "service_quality_metrics": "<value>",
@@ -158,7 +163,7 @@ client_name  client_address, client_email , client_phone ,provider_name , provid
             Text: {extracted_text}
         """}
     ],
-    "max_tokens": 300
+    "max_tokens": 600
 }
 
 
@@ -173,7 +178,19 @@ client_name  client_address, client_email , client_phone ,provider_name , provid
                     
                     structured_data = groq_response["choices"][0]["message"]["content"]
 
-                    print(structured_data)
+                    # print(type(structured_data))
+                    # json_start_index = structured_data.find("{")
+                    # if json_start_index != -1:
+                    #         structured_data = structured_data[json_start_index:]  # Keep only the JSON part
+                    #         try:
+                    #             structured_data_dict = json.loads(structured_data)
+                    #             print("Converted to Dictionary:", structured_data_dict)
+                    #         except json.JSONDecodeError as e:
+                    #             print(f"Error decoding JSON: {e}")
+                    #             structured_data_dict = None
+
+
+
                    
          
                     return JsonResponse(structured_data

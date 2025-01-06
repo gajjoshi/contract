@@ -2,6 +2,8 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaGoogle, FaApple } from "react-icons/fa";
+
 
 
 function SignupPage() {
@@ -38,7 +40,7 @@ function SignupPage() {
 
       if (response.ok) {
         setResponseMessage(data.message);
-        localStorage.setItem("email", formData.email); e
+        localStorage.setItem("email", formData.email); 
         router.push("/home"); 
       } else {
         setResponseMessage(data.error || "Something went wrong");
@@ -72,15 +74,32 @@ function SignupPage() {
           style={styles.input}
           required
         />
+            <button type="submit" style={styles.button}>
+          Submit
+        </button>
               <p style={styles.loginText}>
   Already a user?{" "}
   <span onClick={() => router.push("/login")} style={styles.loginLink}>
     Log in
   </span>
 </p>
-        <button type="submit" style={styles.button}>
-          Submit
-        </button>
+<hr style={styles.horizontalLine} />
+<button style={styles.socialButton}>
+  Continue with Google
+  <img
+    src="./chrome.png"
+    alt="Google"
+    style={styles.socialIcon}
+  />
+</button>
+<button style={styles.socialButton}>
+  Continue with Apple
+  <FaApple style={{ marginLeft: "0.5rem", color: "black" }} />
+</button>
+
+
+
+    
       </form>
       {responseMessage && <p style={styles.message}>{responseMessage}</p>}
 
@@ -96,10 +115,40 @@ const styles = {
     color: "#333",
   },
   loginLink: {
-    color: "#007BFF",
+    color: "#9049fa",
     cursor: "pointer",
     textDecoration: "underline",
     fontWeight: "bold",
+  },
+  socialButton: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    padding: "0.8rem",
+    margin: "0.5rem 0",
+    border: "1px solid #9049fa", // Purple border
+    borderRadius: "10px", // Rounded corners
+    backgroundColor: "transparent", // Transparent background
+    color: "black", // Purple text
+    fontSize: "1rem",
+    // fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
+    textAlign: "center",
+  },
+  socialIcon: {
+    marginLeft: "0.5rem",
+    width: "20px", // Adjust size for icons
+    height: "20px",
+  },
+  
+  horizontalLine: {
+    marginTop: "0.5rem",
+    marginBottom: "1rem",
+    height: "2px",
+    backgroundColor: "#9049fa", // Purple color for the line
+    border: "none",
   },
   
   container: {
@@ -107,19 +156,20 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#000", // Black background
     fontFamily: "Arial, sans-serif",
     color: "black",
   },
   form: {
-    backgroundColor: "#fff",
-    padding: "2rem",
-    borderRadius: "10px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    backgroundColor: "#fff", // White background
+    padding: "2rem 1.5rem", // Adjusted padding for smaller form
+    borderRadius: "15px", // Slightly rounded corners
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Softer shadow for a clean look
     maxWidth: "400px",
     width: "100%",
     textAlign: "center",
   },
+  
   title: {
     fontSize: "1.5rem",
     marginBottom: "1rem",
@@ -129,22 +179,28 @@ const styles = {
     width: "100%",
     padding: "0.8rem",
     margin: "0.5rem 0",
-    borderRadius: "5px",
-    border: "1px solid #ddd",
+    borderRadius: "10px", // Rounded corners
+    border: "1px solid #ddd", // Light gray border for clean design
+    backgroundColor: "#f5f5f5", // Light gray background
+    color: "#333", // Darker text color for contrast
+    textAlign: "start", // Center-align text for modern look
   },
+  
   button: {
     width: "100%",
     padding: "0.8rem",
     margin: "1rem 0",
-    backgroundColor: "#007BFF",
-    color: "#fff",
+    backgroundColor: "#9049fa", // Purple color for submit button
+    color: "#fff", // White text for contrast
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "10px", // Rounded corners
     cursor: "pointer",
     fontSize: "1rem",
     fontWeight: "bold",
+    textTransform: "uppercase", // Capitalize button text
     transition: "background-color 0.3s",
   },
+  
   message: {
     fontSize: "1rem",
     marginTop: "1rem",
